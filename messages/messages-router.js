@@ -19,8 +19,21 @@ router.get("/:id", async (req, res, next) => {
         messages: "Not found"
       });
     }
+    // const [message] = await db
+    //   .select("*")
+    //   .from("messages")
+    //   .where({ id: req.params.id });
+    // res.status(201).json(message);
+
+    // const message = await db
+    //   .first("*")
+    //   .from("messages")
+    //   .where({ id: req.params.id });
+    // res.status(201).json(message);
+    // first will return a plain object without putting inside an array
+
     const message = await db
-      .select("*")
+      .first(["title", "contents"]) // if we want to only some key values form the object
       .from("messages")
       .where({ id: req.params.id });
     res.status(201).json(message);
@@ -31,13 +44,40 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
+    const payload = {
+      title: req.body.title,
+      contents: req.body.contents
+    };
+    // INSERT INTO "messages" ("title" , "contents") values (? , ?)
+    const [newMessage] = await db("messages").insert(payload);
+    const message = await db("messages")
+      .where("id", newMessage)
+      .first();
+
+    res.json(message);
   } catch (err) {
     next(err);
   }
 });
 
-router.put("/:id", async (req, res, next) => {});
+router.put("/:id", async (req, res, next) => {
+    try{
+        const payload = {
+            title: req.body.title,
+            contents: req.body.contents
+        }
+        let id = await db("messages").where("id" , req.params.id).update(payload);
 
-router.delete("/:id", async (req, res, next) => {});
+        const updateMessage = await db("messages").where("id" , id).first();
+        res.json(updateMessage)
+    }
+    catch(err){
+        next(err)
+    }
+});
+
+router.delete("/:id", async (req, res, next) => {
+
+});
 
 module.exports = router;
