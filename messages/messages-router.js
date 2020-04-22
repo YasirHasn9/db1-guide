@@ -12,9 +12,29 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:id", async (req, res, next) => {});
+router.get("/:id", async (req, res, next) => {
+  try {
+    if (!req.params.id) {
+      return res.status(404).json({
+        messages: "Not found"
+      });
+    }
+    const message = await db
+      .select("*")
+      .from("messages")
+      .where({ id: req.params.id });
+    res.status(201).json(message);
+  } catch (err) {
+    next(err);
+  }
+});
 
-router.post("/", async (req, res, next) => {});
+router.post("/", async (req, res, next) => {
+  try {
+  } catch (err) {
+    next(err);
+  }
+});
 
 router.put("/:id", async (req, res, next) => {});
 
