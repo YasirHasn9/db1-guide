@@ -19,3 +19,10 @@ server.use((err, req, res, next) => {
 server.listen(port, () => {
 	console.log(`Server running at http://localhost:${port}`)
 })
+
+
+// SELECT <columns> from <table> where columns = value 
+// example
+// select email 
+// from users
+// where name = "name user";
